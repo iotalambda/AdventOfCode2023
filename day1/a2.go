@@ -2,6 +2,7 @@ package day1
 
 import (
 	"aoc2023/utils"
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
@@ -30,14 +31,17 @@ func Assignment2() {
 		digitToHsilgne[k] = utils.Reverse([]rune(v))
 	}
 
-	lines, err := utils.ReadLines("day1/input.txt")
+	file, err := os.Open("day1/input.txt")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error reading file:", err)
 		os.Exit(1)
 	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+
 	sum := 0
-	for _, line := range lines {
-		runes := []rune(line)
+	for scanner.Scan() {
+		runes := []rune(scanner.Text())
 		senur := utils.Reverse(runes)
 		sum += 10*findDigit(runes, digitToEnglish) + findDigit(senur, digitToHsilgne)
 	}

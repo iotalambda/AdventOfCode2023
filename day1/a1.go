@@ -1,7 +1,7 @@
 package day1
 
 import (
-	"aoc2023/utils"
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
@@ -11,13 +11,16 @@ import (
 )
 
 func Assignment1() {
-	lines, err := utils.ReadLines("day1/input.txt")
+	file, err := os.Open("day1/input.txt")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error reading file:", err)
 		os.Exit(1)
 	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
 	sum := 0
-	for _, line := range lines {
+	for scanner.Scan() {
+		line := scanner.Text()
 		var d1 int
 		var d2 int
 		for i := 0; i < len(line); i++ {
