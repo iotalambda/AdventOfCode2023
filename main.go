@@ -2,6 +2,7 @@ package main
 
 import (
 	"aoc2023/day1"
+	"aoc2023/day2"
 	"aoc2023/utils"
 	"fmt"
 	"os"
@@ -28,6 +29,13 @@ func main() {
 			day1.Assignment1()
 		case 2:
 			day1.Assignment2()
+		}
+	case 2:
+		switch a {
+		case 1:
+			day2.Assignment1()
+		case 2:
+			day2.Assignment2()
 		}
 	default:
 		fmt.Fprintln(os.Stderr, "Day not yet solved.")
