@@ -3,7 +3,6 @@ package main
 import (
 	"aoc2023/day1"
 	"aoc2023/day2"
-	"aoc2023/utils"
 	"fmt"
 	"os"
 	"strconv"
@@ -21,7 +20,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Invalid assignment.")
 		os.Exit(1)
 	}
-	fmt.Printf("Solving day %d assignment %d...%s", day, a, utils.Constants.Newline)
+	fmt.Printf("Solving day %d assignment %d...\n", day, a)
 	switch day {
 	case 1:
 		switch a {

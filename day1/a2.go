@@ -1,10 +1,10 @@
 package day1
 
 import (
-	"aoc2023/utils"
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"unicode"
 
@@ -28,7 +28,8 @@ func Assignment2() {
 	digitToHsilgne := map[int][]rune{}
 	for k, v := range digitToEnglishStr {
 		digitToEnglish[k] = []rune(v)
-		digitToHsilgne[k] = utils.Reverse([]rune(v))
+		digitToHsilgne[k] = slices.Clone(digitToEnglish[k])
+		slices.Reverse(digitToHsilgne[k])
 	}
 
 	file, err := os.Open("day1/input.txt")
@@ -42,7 +43,8 @@ func Assignment2() {
 	sum := 0
 	for scanner.Scan() {
 		runes := []rune(scanner.Text())
-		senur := utils.Reverse(runes)
+		senur := slices.Clone(runes)
+		slices.Reverse(senur)
 		sum += 10*findDigit(runes, digitToEnglish) + findDigit(senur, digitToHsilgne)
 	}
 	clipboard.WriteAll(strconv.Itoa(sum))
@@ -55,12 +57,12 @@ func findDigit(line []rune, translations map[int][]rune) int {
 			return int(c - '0')
 		}
 		for k, v := range translations {
-			if utils.AreEqual(v, line[i:min(i+len(v), len(line))]) {
+			if slices.Equal(v, line[i:min(i+len(v), len(line))]) {
 				return k
 			}
 		}
 	}
-	fmt.Fprintf(os.Stderr, "No digits found on line: %s%s", string(line), utils.Constants.Newline)
+	fmt.Fprintln(os.Stderr, "No digits found on line:", string(line))
 	os.Exit(1)
 	panic(nil)
 }
