@@ -3,6 +3,7 @@ package main
 import (
 	"aoc2023/day1"
 	"aoc2023/day2"
+	"aoc2023/day3"
 	"fmt"
 	"os"
 	"strconv"
@@ -35,6 +36,13 @@ func main() {
 			day2.Assignment1()
 		case 2:
 			day2.Assignment2()
+		}
+	case 3:
+		switch a {
+		case 1:
+			day3.Assignment1()
+		case 2:
+			day3.Assignment2()
 		}
 	default:
 		fmt.Fprintln(os.Stderr, "Day not yet solved.")

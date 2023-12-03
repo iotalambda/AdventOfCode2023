@@ -23,6 +23,7 @@ func Assignment1() {
 		fmt.Fprintln(os.Stderr, "Could not open file:", err)
 		os.Exit(1)
 	}
+	defer file.Close()
 	scanner := bufio.NewScanner(file)
 
 	possibleGames := 0

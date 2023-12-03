@@ -17,6 +17,7 @@ func Assignment2() {
 		fmt.Fprintln(os.Stderr, "Could not open file:", err)
 		os.Exit(1)
 	}
+	defer file.Close()
 	scanner := bufio.NewScanner(file)
 
 	totalPower := 0
