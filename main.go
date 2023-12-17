@@ -97,6 +97,8 @@ func main() {
 		switch a {
 		case 1:
 			day10.Assignment1()
+		case 2:
+			day10.Assignment2()
 		}
 	default:
 		fmt.Fprintln(os.Stderr, "Day not yet solved.")

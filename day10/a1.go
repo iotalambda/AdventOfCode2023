@@ -11,7 +11,53 @@ import (
 )
 
 func Assignment1() {
-	file, err := os.Open("day10/input.txt")
+
+	area := getArea("day10/input.txt")
+	fp := '#'
+	finders := getInitialFinders(area, 'S')
+	step := buildStep(area, &finders, fp)
+	distance := runAssignment1(area, &finders, fp, step)
+	clipboard.WriteAll(strconv.Itoa(distance))
+}
+
+func runAssignment1(area [][]rune, finders *[]finder, footprint rune, step func(f_ix int, x int, y int, look bool)) int {
+	canGoUp := func(f finder, accept_start bool) bool {
+		return pointsUp(f.r, true) && pointsDown(area[f.y-1][f.x], accept_start)
+	}
+	canGoDown := func(f finder, accept_start bool) bool {
+		return pointsDown(f.r, true) && pointsUp(area[f.y+1][f.x], accept_start)
+	}
+	canGoLeft := func(f finder, accept_start bool) bool {
+		return pointsLeft(f.r, true) && pointsRight(area[f.y][f.x-1], accept_start)
+	}
+	canGoRight := func(f finder, accept_start bool) bool {
+		return pointsRight(f.r, true) && pointsLeft(area[f.y][f.x+1], accept_start)
+	}
+
+	return runFinders(area, finders, footprint, step, canGoUp, canGoDown, canGoLeft, canGoRight)
+}
+
+func pointsUp(r rune, or_start bool) bool {
+	return r == 'J' || r == '|' || r == 'L' || or_start && r == 'S'
+}
+func pointsDown(r rune, or_start bool) bool {
+	return r == '7' || r == '|' || r == 'F' || or_start && r == 'S'
+}
+func pointsLeft(r rune, or_start bool) bool {
+	return r == 'J' || r == '-' || r == '7' || or_start && r == 'S'
+}
+func pointsRight(r rune, or_start bool) bool {
+	return r == 'L' || r == '-' || r == 'F' || or_start && r == 'S'
+}
+
+type finder struct {
+	x int
+	y int
+	r rune
+}
+
+func getArea(file_path string) [][]rune {
+	file, err := os.Open(file_path)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Could not open file:", err)
 		os.Exit(1)
@@ -21,115 +67,84 @@ func Assignment1() {
 
 	area := make([][]rune, 0)
 
-	up := uint8(1)
-	down := uint8(2)
-	left := uint8(4)
-	right := uint8(8)
-
-	isUp := func(r rune) bool {
-		return r == 'J' || r == '|' || r == 'L'
-	}
-	isDown := func(r rune) bool {
-		return r == '7' || r == '|' || r == 'F'
-	}
-	isLeft := func(r rune) bool {
-		return r == 'L' || r == '-' || r == 'F'
-	}
-	isRight := func(r rune) bool {
-		return r == 'J' || r == '-' || r == '7'
-	}
-
-	neighbours := func(f finder) uint8 {
-		var result uint8
-		if f.y > 0 && (isUp(f.r) || f.r == 'S') {
-			if r := area[f.y-1][f.x]; isDown(r) {
-				result |= up
-			}
-		}
-		if f.y < len(area)-1 && (isDown(f.r) || f.r == 'S') {
-			if r := area[f.y+1][f.x]; isUp(r) {
-				result |= down
-			}
-		}
-		if f.x > 0 && (isRight(f.r) || f.r == 'S') {
-			if r := area[f.y][f.x-1]; isLeft(r) {
-				result |= left
-			}
-		}
-		if f.x < len(area[0])-1 && (isLeft(f.r) || f.r == 'S') {
-			if r := area[f.y][f.x+1]; isRight(r) {
-				result |= right
-			}
-		}
-		return result
-	}
-
-	s_x, s_y := -1, -1
 	for scanner.Scan() {
 		line := []rune(scanner.Text())
 		area = append(area, line)
+	}
+
+	return area
+}
+
+func getInitialFinders(area [][]rune, start_at rune) []finder {
+	s_x, s_y := -1, -1
+	for _, line := range area {
 		if s_x == -1 {
-			s_x = slices.Index(line, 'S')
+			s_x = slices.Index(line, start_at)
 			s_y++
 		}
 	}
+	return []finder{{s_x, s_y, start_at}}
+}
 
-	finders := []finder{{s_x, s_y, 'S'}}
-
-	step := func(f_ix int, x int, y int, n_ix *int) {
+func buildStep(area [][]rune, finders *[]finder, footprint rune) func(f_ix int, x int, y int, look bool) {
+	step := func(f_ix int, x int, y int, look bool) {
 		next := finder{x, y, area[y][x]}
-		if *n_ix == 0 {
-			finders[f_ix] = next
+		if look {
+			(*finders)[f_ix] = next
 		} else {
-			finders = append(finders, next)
+			*finders = append(*finders, next)
 		}
-		area[y][x] = '.'
-		*n_ix++
+		area[y][x] = footprint
 	}
+	return step
+}
+
+func runFinders(area [][]rune, finders *[]finder, footprint rune, step func(f_ix int, x int, y int, look bool),
+	canGoUp func(finder, bool) bool,
+	canGoDown func(finder, bool) bool,
+	canGoLeft func(finder, bool) bool,
+	canGoRight func(finder, bool) bool) int {
+
+	w_area := len(area[0])
+	h_area := len(area)
 
 	var d int
 
-	for ; len(finders) > 0; d++ {
+	for ; len(*finders) > 0; d++ {
 		var deleted_finders []int
-		for f_ix, f := range finders {
-			ns := neighbours(f)
+		for f_ix, f := range *finders {
+			look := true
+			if f.y > 0 && canGoUp(f, d > 1) {
+				step(f_ix, f.x, f.y-1, look)
+				look = false
+			}
+			if f.y < h_area-1 && canGoDown(f, d > 1) {
+				step(f_ix, f.x, f.y+1, look)
+				look = false
+			}
+			if f.x > 0 && canGoLeft(f, d > 1) {
+				step(f_ix, f.x-1, f.y, look)
+				look = false
+			}
+			if f.x < w_area-1 && canGoRight(f, d > 1) {
+				step(f_ix, f.x+1, f.y, look)
+				look = false
+			}
 
-			if ns == 0 {
+			if look {
 				if deleted_finders == nil {
 					deleted_finders = make([]int, 0)
 				}
 				deleted_finders = append(deleted_finders, f_ix)
-			}
-			var n_ix int
-
-			if (ns & up) == up {
-				step(f_ix, f.x, f.y-1, &n_ix)
-			}
-			if (ns & down) == down {
-				step(f_ix, f.x, f.y+1, &n_ix)
-			}
-			if (ns & left) == left {
-				step(f_ix, f.x-1, f.y, &n_ix)
-			}
-			if (ns & right) == right {
-				step(f_ix, f.x+1, f.y, &n_ix)
 			}
 		}
 
 		if deleted_finders != nil {
 			slices.Reverse(deleted_finders)
 			for _, f_ix := range deleted_finders {
-				finders = slices.Delete(finders, f_ix, f_ix+1)
+				*finders = slices.Delete(*finders, f_ix, f_ix+1)
 			}
 		}
 	}
-	d--
-
-	clipboard.WriteAll(strconv.Itoa(d))
-}
-
-type finder struct {
-	x int
-	y int
-	r rune
+	return d - 1
 }
