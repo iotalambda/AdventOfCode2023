@@ -1,6 +1,7 @@
 package day9
 
 import (
+	"aoc2023/utils"
 	"bufio"
 	"fmt"
 	"os"
@@ -22,7 +23,7 @@ func Assignment1() {
 	sum := 0
 
 	for scanner.Scan() {
-		readings := ints(strings.Fields(scanner.Text()))
+		readings := utils.Ints(strings.Fields(scanner.Text()))
 		sum += extrapolate(readings)
 	}
 
@@ -43,17 +44,4 @@ func extrapolate(readings []int) int {
 		return readings[len(readings)-1] + extrapolate(diffs)
 	}
 	return readings[0]
-}
-
-func ints(source []string) []int {
-	result := make([]int, len(source))
-	for i, str := range source {
-		v, err := strconv.Atoi(str)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Could not parse int:", err)
-			os.Exit(1)
-		}
-		result[i] = v
-	}
-	return result
 }

@@ -1,6 +1,7 @@
 package day9
 
 import (
+	"aoc2023/utils"
 	"bufio"
 	"fmt"
 	"os"
@@ -23,7 +24,7 @@ func Assignment2() {
 	sum := 0
 
 	for scanner.Scan() {
-		readings := ints(strings.Fields(scanner.Text()))
+		readings := utils.Ints(strings.Fields(scanner.Text()))
 		slices.Reverse(readings)
 		sum += extrapolate(readings)
 	}
