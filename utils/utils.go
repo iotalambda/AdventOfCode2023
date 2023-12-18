@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
@@ -17,4 +18,24 @@ func Ints(source []string) []int {
 		result[i] = v
 	}
 	return result
+}
+
+func ForEachMatrix(scanner *bufio.Scanner, action func(matrix [][]rune)) {
+	var matrix [][]rune
+	for scanner.Scan() {
+		row := []rune(scanner.Text())
+
+		if len(row) <= 1 {
+			action(matrix)
+			matrix = nil
+			continue
+		}
+
+		if matrix == nil {
+			matrix = make([][]rune, 0)
+		}
+
+		matrix = append(matrix, row)
+	}
+	action(matrix)
 }

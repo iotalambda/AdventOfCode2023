@@ -1,6 +1,7 @@
 package day13
 
 import (
+	"aoc2023/utils"
 	"bufio"
 	"fmt"
 	"os"
@@ -22,25 +23,10 @@ func runAssignment1(path string, smudges int) {
 	defer file.Close()
 	scanner := bufio.NewScanner(file)
 
-	var pattern [][]rune
 	total := 0
-
-	for scanner.Scan() {
-		row := []rune(scanner.Text())
-
-		if len(row) <= 1 {
-			total += summarize(pattern, smudges)
-			pattern = nil
-			continue
-		}
-
-		if pattern == nil {
-			pattern = make([][]rune, 0)
-		}
-
-		pattern = append(pattern, row)
-	}
-	total += summarize(pattern, smudges)
+	utils.ForEachMatrix(scanner, func(matrix [][]rune) {
+		total += summarize(matrix, smudges)
+	})
 
 	clipboard.WriteAll(strconv.Itoa(total))
 }
