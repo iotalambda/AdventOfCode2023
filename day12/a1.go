@@ -33,7 +33,7 @@ func runAssignment1(path string, prepare func(record []rune, sizes []int) ([]run
 		record := []rune(parts[0])
 		sizes := utils.Ints(strings.Split(parts[1], ","))
 		record, sizes = prepare(record, sizes)
-		result := arrangements(0, 0, record, sizes, nil)
+		result := arrangements(0, 0, record, sizes, make(map[key]int))
 		total += result
 	}
 
@@ -46,10 +46,6 @@ func arrangements(r0_ix int, s_ix int, record []rune, sizes []int, cache map[key
 
 	so_far := 0
 	restrict_start, restrict_end := false, false
-
-	if cache == nil {
-		cache = make(map[key]int)
-	}
 
 	for r_ix := r0_ix; r_ix < len(record); r_ix++ {
 
@@ -89,10 +85,9 @@ func arrangements(r0_ix int, s_ix int, record []rune, sizes []int, cache map[key
 			}
 
 			if s_ix == len(sizes)-1 {
-				if slices.Index(record[last_ix+1:], '#') != -1 {
-					continue
+				if slices.Index(record[last_ix+1:], '#') == -1 {
+					result++
 				}
-				result += 1
 			} else if last_ix+2 < len(record) {
 				next_r_ix := last_ix + 2
 				next_s_ix := s_ix + 1
@@ -104,8 +99,6 @@ func arrangements(r0_ix int, s_ix int, record []rune, sizes []int, cache map[key
 					cache[k] = v
 					result += v
 				}
-			} else {
-				continue
 			}
 		}
 	}

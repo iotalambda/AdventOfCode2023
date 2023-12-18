@@ -39,11 +39,6 @@ func Assignment2() {
 		next_r := area[y][x]
 		area[y][x] = fp_loop
 
-		curr_str := string(f.r)
-		_ = curr_str
-		next_str := string(next_r)
-		_ = next_str
-
 		if pointsUp(f.r, true) && f.y > y {
 
 			if f.r == 'J' {
