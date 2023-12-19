@@ -8,6 +8,7 @@ import (
 	"aoc2023/day13"
 	"aoc2023/day14"
 	"aoc2023/day15"
+	"aoc2023/day16"
 	"aoc2023/day2"
 	"aoc2023/day3"
 	"aoc2023/day4"
@@ -139,6 +140,13 @@ func main() {
 			day15.Assignment1()
 		case 2:
 			day15.Assignment2()
+		}
+	case 16:
+		switch a {
+		case 1:
+			day16.Assignment1()
+		case 2:
+			day16.Assignment2()
 		}
 	default:
 		fmt.Fprintln(os.Stderr, "Day not yet solved.")
