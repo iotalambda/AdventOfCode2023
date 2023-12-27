@@ -52,7 +52,7 @@ func runAssignment1(contraption [][]rune, initial_beam beam) int {
 	to_remove := make([]int, 0)
 	to_add := make([]beam, 0)
 
-	proceed := func(b0 beam, b_ix int, fw_y_offset int, fw_x_offset int, fw dir, splitter rune, slash_dir dir, bslash_dir dir) {
+	proceed := func(b0 beam, b_ix int, fw_y_offset int, fw_x_offset int, fw uint8, splitter rune, slash_dir uint8, bslash_dir uint8) {
 		r, found := contraptionAt(b0.y+fw_y_offset, b0.x+fw_x_offset)
 		if !found {
 			to_remove = append(to_remove, b_ix)
@@ -60,11 +60,11 @@ func runAssignment1(contraption [][]rune, initial_beam beam) int {
 		}
 
 		e := &energization[b0.y+fw_y_offset][b0.x+fw_x_offset]
-		if *e&uint8(fw) > 0 {
+		if *e&fw > 0 {
 			to_remove = append(to_remove, b_ix)
 			return
 		}
-		*e |= uint8(fw)
+		*e |= fw
 
 		b := &beams[b_ix]
 		b.y += fw_y_offset
@@ -76,7 +76,7 @@ func runAssignment1(contraption [][]rune, initial_beam beam) int {
 		case '\\':
 			b.d = bslash_dir
 		case splitter:
-			*e |= uint8(All)
+			*e |= All
 			b.d = slash_dir
 			to_add = append(to_add, beam{b.y, b.x, bslash_dir})
 		}
@@ -101,13 +101,13 @@ func runAssignment1(contraption [][]rune, initial_beam beam) int {
 		}
 
 		for b_ix, b := range beams {
-			if b.d&Up > 0 {
+			if b.d == Up {
 				proceed(b, b_ix, -1, 0, Up, '-', Right, Left)
-			} else if b.d&Down > 0 {
+			} else if b.d == Down {
 				proceed(b, b_ix, 1, 0, Down, '-', Left, Right)
-			} else if b.d&Left > 0 {
+			} else if b.d == Left {
 				proceed(b, b_ix, 0, -1, Left, '|', Down, Up)
-			} else if b.d&Right > 0 {
+			} else if b.d == Right {
 				proceed(b, b_ix, 0, 1, Right, '|', Up, Down)
 			}
 		}
@@ -128,15 +128,13 @@ func runAssignment1(contraption [][]rune, initial_beam beam) int {
 type beam struct {
 	y int
 	x int
-	d dir
+	d uint8
 }
 
-type dir uint8
-
 const (
-	Up    dir = 1
-	Left  dir = 2
-	Right dir = 4
-	Down  dir = 8
-	All   dir = 1 + 2 + 4 + 8
+	Up    uint8 = 1
+	Left  uint8 = 2
+	Right uint8 = 4
+	Down  uint8 = 8
+	All   uint8 = Up + Down + Left + Right
 )
