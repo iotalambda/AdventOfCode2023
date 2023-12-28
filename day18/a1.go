@@ -13,7 +13,7 @@ import (
 )
 
 func Assignment1() {
-	runAssignment1("day18/input.txt", func(i []instruction) {})
+	runAssignment1("day18/input.txt", func(_ []instruction) {})
 }
 
 func runAssignment1(path string, prepare func([]instruction)) {
@@ -79,15 +79,14 @@ func runAssignment1(path string, prepare func([]instruction)) {
 		case 'U':
 			fallthrough
 		case 'D':
-			if prevLine != nil {
-				if prevLine.Out == i.Dir {
-					if prevLine.Dir == 'L' {
-						prevLine.X1++
-					} else {
-						prevLine.X2--
-					}
+			if prevLine != nil && prevLine.Out == i.Dir {
+				if prevLine.Dir == 'L' {
+					prevLine.X1++
+				} else {
+					prevLine.X2--
 				}
 			}
+
 			prevD = i.Dir
 
 		case 'L':
