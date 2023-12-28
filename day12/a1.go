@@ -40,62 +40,62 @@ func runAssignment1(path string, prepare func(record []rune, sizes []int) ([]run
 	clipboard.WriteAll(strconv.Itoa(total))
 }
 
-func arrangements(r0_ix int, s_ix int, record []rune, sizes []int, cache map[key]int) int {
-	size := sizes[s_ix]
+func arrangements(r0Ix int, sIx int, record []rune, sizes []int, cache map[key]int) int {
+	size := sizes[sIx]
 	result := 0
 
-	so_far := 0
-	restrict_start, restrict_end := false, false
+	soFar := 0
+	restrictStart, restrictEnd := false, false
 
-	for r_ix := r0_ix; r_ix < len(record); r_ix++ {
+	for rIx := r0Ix; rIx < len(record); rIx++ {
 
-		if restrict_start && so_far == 0 {
+		if restrictStart && soFar == 0 {
 			break
 		}
 
-		r := record[r_ix]
+		r := record[rIx]
 
 		if r == '.' {
-			if restrict_end {
+			if restrictEnd {
 				break
 			}
-			so_far = 0
+			soFar = 0
 			continue
 		}
 
 		if r == '#' {
-			restrict_end = true
-			if so_far == 0 {
-				restrict_start = true
+			restrictEnd = true
+			if soFar == 0 {
+				restrictStart = true
 			}
 		}
 
-		so_far++
+		soFar++
 
-		if so_far == size {
-			last_ix := r_ix
-			r_ix -= so_far - 1
-			so_far = 0
+		if soFar == size {
+			lastIx := rIx
+			rIx -= soFar - 1
+			soFar = 0
 
-			if last_ix+1 < len(record) && record[last_ix+1] == '#' {
-				if record[last_ix-size+1] == '#' {
+			if lastIx+1 < len(record) && record[lastIx+1] == '#' {
+				if record[lastIx-size+1] == '#' {
 					break
 				}
 				continue
 			}
 
-			if s_ix == len(sizes)-1 {
-				if slices.Index(record[last_ix+1:], '#') == -1 {
+			if sIx == len(sizes)-1 {
+				if slices.Index(record[lastIx+1:], '#') == -1 {
 					result++
 				}
-			} else if last_ix+2 < len(record) {
-				next_r_ix := last_ix + 2
-				next_s_ix := s_ix + 1
-				k := key{next_r_ix, next_s_ix}
+			} else if lastIx+2 < len(record) {
+				nextRIx := lastIx + 2
+				nextSIx := sIx + 1
+				k := key{nextRIx, nextSIx}
 				if v, found := cache[k]; found {
 					result += v
 				} else {
-					v := arrangements(next_r_ix, next_s_ix, record, sizes, cache)
+					v := arrangements(nextRIx, nextSIx, record, sizes, cache)
 					cache[k] = v
 					result += v
 				}
@@ -107,6 +107,6 @@ func arrangements(r0_ix int, s_ix int, record []rune, sizes []int, cache map[key
 }
 
 type key struct {
-	r_ix int
-	s_ix int
+	rIx int
+	sIx int
 }

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 )
 
@@ -38,4 +39,11 @@ func ForEachMatrix(scanner *bufio.Scanner, action func(matrix [][]rune)) {
 		matrix = append(matrix, row)
 	}
 	action(matrix)
+}
+
+func Prepend[T any](slice []T, elems ...T) []T {
+	slices.Reverse(slice)
+	slice = append(slice, elems...)
+	slices.Reverse(slice)
+	return slice
 }

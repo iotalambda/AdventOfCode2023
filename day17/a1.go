@@ -16,7 +16,7 @@ func Assignment1() {
 	runAssignment1("day17/input.txt", 1, 3)
 }
 
-func runAssignment1(path string, min_streak, max_streak int) {
+func runAssignment1(path string, minStreak, maxStreak int) {
 	file, err := os.Open(path)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Could not open file:", err)
@@ -31,12 +31,12 @@ func runAssignment1(path string, min_streak, max_streak int) {
 		for y, row := range matrix {
 			city[y] = make([]block, len(row))
 			for x, r := range row {
-				b := block{int(r - '0'), make([]int, max_streak), make([]int, max_streak), make([]int, max_streak), make([]int, max_streak)}
-				for s := 0; s < max_streak; s++ {
-					b.min_hl_up[s] = math.MaxInt
-					b.min_hl_down[s] = math.MaxInt
-					b.min_hl_left[s] = math.MaxInt
-					b.min_hl_right[s] = math.MaxInt
+				b := block{int(r - '0'), make([]int, maxStreak), make([]int, maxStreak), make([]int, maxStreak), make([]int, maxStreak)}
+				for s := 0; s < maxStreak; s++ {
+					b.minHlUp[s] = math.MaxInt
+					b.minHlDown[s] = math.MaxInt
+					b.minHlLeft[s] = math.MaxInt
+					b.minHlRight[s] = math.MaxInt
 				}
 				city[y][x] = b
 			}
@@ -51,7 +51,7 @@ func runAssignment1(path string, min_streak, max_streak int) {
 	}
 
 	var tips []tip
-	next_tips := []tip{}
+	nextTips := []tip{}
 	tryAddTip := func(t tip) {
 		b, found := tryGetBlock(t.y, t.x)
 		if !found {
@@ -59,70 +59,70 @@ func runAssignment1(path string, min_streak, max_streak int) {
 		}
 		add := false
 		for d := t.step - 1; d < t.fuel; d++ {
-			if mhl := b.getMinHeatLoss(t.dir)[d]; mhl > t.hl_total {
-				b.setMinHeatLoss(t.dir, d, t.hl_total)
+			if mhl := b.getMinHeatLoss(t.dir)[d]; mhl > t.hlTotal {
+				b.setMinHeatLoss(t.dir, d, t.hlTotal)
 				add = true
 			}
 		}
 		if !add {
 			return
 		}
-		next_tips = append(next_tips, t)
+		nextTips = append(nextTips, t)
 	}
-	tryAddTip(tip{0, 0, Right, min_streak, max_streak, 0})
-	tryAddTip(tip{0, 0, Down, min_streak, max_streak, 0})
+	tryAddTip(tip{0, 0, Right, minStreak, maxStreak, 0})
+	tryAddTip(tip{0, 0, Down, minStreak, maxStreak, 0})
 
-	for len(next_tips) > 0 {
+	for len(nextTips) > 0 {
 
-		tips = next_tips
-		next_tips = []tip{}
+		tips = nextTips
+		nextTips = []tip{}
 
-	tips_loop:
+	tipsLoop:
 		for _, t := range tips {
-			offset_y, offset_x := offsets(t.dir)
+			offsetY, offsetX := offsets(t.dir)
 			lh, rh := sides(t.dir)
-			hl_streak := t.hl_total
+			hlStreak := t.hlTotal
 			y, x := t.y, t.x
 			for s := 0; s < t.step; s++ {
-				y += offset_y
-				x += offset_x
+				y += offsetY
+				x += offsetX
 				b, found := tryGetBlock(y, x)
 				if !found {
-					continue tips_loop
+					continue tipsLoop
 				}
-				hl_streak += b.hl
+				hlStreak += b.hl
 				t.fuel--
 			}
-			tryAddTip(tip{y, x, lh, min_streak, max_streak, hl_streak})
-			tryAddTip(tip{y, x, rh, min_streak, max_streak, hl_streak})
-			tryAddTip(tip{y, x, t.dir, 1, t.fuel, hl_streak})
+			tryAddTip(tip{y, x, lh, minStreak, maxStreak, hlStreak})
+			tryAddTip(tip{y, x, rh, minStreak, maxStreak, hlStreak})
+			tryAddTip(tip{y, x, t.dir, 1, t.fuel, hlStreak})
 		}
 	}
 
 	goal := city[h-1][w-1]
-	result := slices.Min(goal.min_hl_down)
-	result = min(result, slices.Min(goal.min_hl_right))
+	result := slices.Min(goal.minHlDown)
+	result = min(result, slices.Min(goal.minHlRight))
 	clipboard.WriteAll(strconv.Itoa(result))
 }
 
 type block struct {
-	hl           int
-	min_hl_up    []int
-	min_hl_down  []int
-	min_hl_left  []int
-	min_hl_right []int
+	hl         int
+	minHlUp    []int
+	minHlDown  []int
+	minHlLeft  []int
+	minHlRight []int
 }
 
 func (b *block) getMinHeatLoss(dir rune) []int {
 	switch dir {
 	case Up:
-		return b.min_hl_up
+		return b.minHlUp
 	case Down:
-		return b.min_hl_down
+		return b.minHlDown
 	case Left:
-		return b.min_hl_left
+		return b.minHlLeft
 	case Right:
-		return b.min_hl_right
+		return b.minHlRight
 	}
 	panic(nil)
 }
@@ -130,22 +130,22 @@ func (b *block) getMinHeatLoss(dir rune) []int {
 func (b *block) setMinHeatLoss(dir rune, ix int, value int) {
 	switch dir {
 	case Up:
-		b.min_hl_up[ix] = value
+		b.minHlUp[ix] = value
 	case Down:
-		b.min_hl_down[ix] = value
+		b.minHlDown[ix] = value
 	case Left:
-		b.min_hl_left[ix] = value
+		b.minHlLeft[ix] = value
 	case Right:
-		b.min_hl_right[ix] = value
+		b.minHlRight[ix] = value
 	}
 }
 
 type tip struct {
-	y, x     int
-	dir      rune
-	step     int
-	fuel     int
-	hl_total int
+	y, x    int
+	dir     rune
+	step    int
+	fuel    int
+	hlTotal int
 }
 
 const (

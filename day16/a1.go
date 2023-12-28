@@ -33,7 +33,7 @@ func contraption(path string) [][]rune {
 	return contraption
 }
 
-func runAssignment1(contraption [][]rune, initial_beam beam) int {
+func runAssignment1(contraption [][]rune, initialBeam beam) int {
 	h, w := len(contraption), len(contraption[0])
 	energization := make([][]uint8, h)
 	for y := range energization {
@@ -48,67 +48,67 @@ func runAssignment1(contraption [][]rune, initial_beam beam) int {
 		return contraption[y][x], true
 	}
 
-	beams := []beam{initial_beam}
-	to_remove := make([]int, 0)
-	to_add := make([]beam, 0)
+	beams := []beam{initialBeam}
+	toRemove := make([]int, 0)
+	toAdd := make([]beam, 0)
 
-	proceed := func(b0 beam, b_ix int, fw_y_offset int, fw_x_offset int, fw uint8, splitter rune, slash_dir uint8, bslash_dir uint8) {
-		r, found := contraptionAt(b0.y+fw_y_offset, b0.x+fw_x_offset)
+	proceed := func(b0 beam, bIx int, fwYOffset int, fwXOffset int, fw uint8, splitter rune, slashDir uint8, bslashDir uint8) {
+		r, found := contraptionAt(b0.y+fwYOffset, b0.x+fwXOffset)
 		if !found {
-			to_remove = append(to_remove, b_ix)
+			toRemove = append(toRemove, bIx)
 			return
 		}
 
-		e := &energization[b0.y+fw_y_offset][b0.x+fw_x_offset]
+		e := &energization[b0.y+fwYOffset][b0.x+fwXOffset]
 		if *e&fw > 0 {
-			to_remove = append(to_remove, b_ix)
+			toRemove = append(toRemove, bIx)
 			return
 		}
 		*e |= fw
 
-		b := &beams[b_ix]
-		b.y += fw_y_offset
-		b.x += fw_x_offset
+		b := &beams[bIx]
+		b.y += fwYOffset
+		b.x += fwXOffset
 
 		switch r {
 		case '/':
-			b.d = slash_dir
+			b.d = slashDir
 		case '\\':
-			b.d = bslash_dir
+			b.d = bslashDir
 		case splitter:
 			*e |= All
-			b.d = slash_dir
-			to_add = append(to_add, beam{b.y, b.x, bslash_dir})
+			b.d = slashDir
+			toAdd = append(toAdd, beam{b.y, b.x, bslashDir})
 		}
 	}
 
 	for {
-		if len(to_remove) > 0 {
-			slices.Reverse(to_remove)
-			for _, b_ix := range to_remove {
-				beams = slices.Delete(beams, b_ix, b_ix+1)
+		if len(toRemove) > 0 {
+			slices.Reverse(toRemove)
+			for _, bIx := range toRemove {
+				beams = slices.Delete(beams, bIx, bIx+1)
 			}
-			to_remove = make([]int, 0)
+			toRemove = make([]int, 0)
 		}
 
-		if len(to_add) > 0 {
-			beams = append(beams, to_add...)
-			to_add = make([]beam, 0)
+		if len(toAdd) > 0 {
+			beams = append(beams, toAdd...)
+			toAdd = make([]beam, 0)
 		}
 
 		if len(beams) == 0 {
 			break
 		}
 
-		for b_ix, b := range beams {
+		for bIx, b := range beams {
 			if b.d == Up {
-				proceed(b, b_ix, -1, 0, Up, '-', Right, Left)
+				proceed(b, bIx, -1, 0, Up, '-', Right, Left)
 			} else if b.d == Down {
-				proceed(b, b_ix, 1, 0, Down, '-', Left, Right)
+				proceed(b, bIx, 1, 0, Down, '-', Left, Right)
 			} else if b.d == Left {
-				proceed(b, b_ix, 0, -1, Left, '|', Down, Up)
+				proceed(b, bIx, 0, -1, Left, '|', Down, Up)
 			} else if b.d == Right {
-				proceed(b, b_ix, 0, 1, Right, '|', Up, Down)
+				proceed(b, bIx, 0, 1, Right, '|', Up, Down)
 			}
 		}
 	}

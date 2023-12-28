@@ -40,56 +40,56 @@ func tilt(matrix [][]rune, direction direction) {
 			switch direction {
 			case North:
 				if matrix[y][x] == 'O' {
-					y_t := y
-					for ; y_t > 0; y_t-- {
-						if matrix[y_t-1][x] != '.' {
+					yT := y
+					for ; yT > 0; yT-- {
+						if matrix[yT-1][x] != '.' {
 							break
 						}
 					}
-					if y != y_t {
+					if y != yT {
 						matrix[y][x] = '.'
-						matrix[y_t][x] = 'O'
+						matrix[yT][x] = 'O'
 					}
 				}
 			case South:
-				y_rev := h - y - 1
-				if matrix[y_rev][x] == 'O' {
-					y_t := y_rev
-					for ; y_t < h-1; y_t++ {
-						if matrix[y_t+1][x] != '.' {
+				yRev := h - y - 1
+				if matrix[yRev][x] == 'O' {
+					yT := yRev
+					for ; yT < h-1; yT++ {
+						if matrix[yT+1][x] != '.' {
 							break
 						}
 					}
-					if y_rev != y_t {
-						matrix[y_rev][x] = '.'
-						matrix[y_t][x] = 'O'
+					if yRev != yT {
+						matrix[yRev][x] = '.'
+						matrix[yT][x] = 'O'
 					}
 				}
 			case West:
 				if matrix[y][x] == 'O' {
-					x_t := x
-					for ; x_t > 0; x_t-- {
-						if matrix[y][x_t-1] != '.' {
+					xT := x
+					for ; xT > 0; xT-- {
+						if matrix[y][xT-1] != '.' {
 							break
 						}
 					}
-					if x != x_t {
+					if x != xT {
 						matrix[y][x] = '.'
-						matrix[y][x_t] = 'O'
+						matrix[y][xT] = 'O'
 					}
 				}
 			case East:
-				x_rev := w - x - 1
-				if matrix[y][x_rev] == 'O' {
-					x_t := x_rev
-					for ; x_t < w-1; x_t++ {
-						if matrix[y][x_t+1] != '.' {
+				xRev := w - x - 1
+				if matrix[y][xRev] == 'O' {
+					xT := xRev
+					for ; xT < w-1; xT++ {
+						if matrix[y][xT+1] != '.' {
 							break
 						}
 					}
-					if x_rev != x_t {
-						matrix[y][x_rev] = '.'
-						matrix[y][x_t] = 'O'
+					if xRev != xT {
+						matrix[y][xRev] = '.'
+						matrix[y][xT] = 'O'
 					}
 				}
 			}

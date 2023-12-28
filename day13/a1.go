@@ -34,15 +34,15 @@ func runAssignment1(path string, smudges int) {
 func summarize(pattern [][]rune, smudges int) int {
 	w, h := len(pattern[0]), len(pattern)
 
-x_loop:
+xLoop:
 	for x := 0; x < w-1; x++ {
 		diff := 0
-		for x_l, x_r := x, x+1; x_l >= 0 && x_r < w; x_l, x_r = x_l-1, x_r+1 {
+		for xL, xR := x, x+1; xL >= 0 && xR < w; xL, xR = xL-1, xR+1 {
 			for _, row := range pattern {
-				if row[x_l] != row[x_r] {
+				if row[xL] != row[xR] {
 					diff++
 					if diff > smudges {
-						continue x_loop
+						continue xLoop
 					}
 				}
 			}
@@ -52,15 +52,15 @@ x_loop:
 		}
 	}
 
-y_loop:
+yLoop:
 	for y := 0; y < h-1; y++ {
 		diff := 0
-		for y_t, y_b := y, y+1; y_t >= 0 && y_b < h; y_t, y_b = y_t-1, y_b+1 {
+		for yT, yB := y, y+1; yT >= 0 && yB < h; yT, yB = yT-1, yB+1 {
 			for x := 0; x < w; x++ {
-				if pattern[y_t][x] != pattern[y_b][x] {
+				if pattern[yT][x] != pattern[yB][x] {
 					diff++
 					if diff > smudges {
-						continue y_loop
+						continue yLoop
 					}
 				}
 			}

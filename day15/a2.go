@@ -22,7 +22,7 @@ func Assignment2() {
 	scanner.Scan()
 
 	sequence := strings.Split(scanner.Text(), ",")
-	label_box_ixs := make(map[string]int, 0)
+	labelBoxIxs := make(map[string]int, 0)
 
 	boxes := make([][]lens, 256)
 	for ix := range boxes {
@@ -31,55 +31,55 @@ func Assignment2() {
 
 	for _, part := range sequence {
 
-		op_ix := strings.IndexRune(part, '=')
-		if op_ix == -1 {
-			op_ix = strings.IndexRune(part, '-')
+		opIx := strings.IndexRune(part, '=')
+		if opIx == -1 {
+			opIx = strings.IndexRune(part, '-')
 		}
 
-		label := part[:op_ix]
+		label := part[:opIx]
 
-		box_ix, found := label_box_ixs[label]
+		boxIx, found := labelBoxIxs[label]
 		if !found {
-			box_ix = hash(label)
-			label_box_ixs[label] = box_ix
+			boxIx = hash(label)
+			labelBoxIxs[label] = boxIx
 		}
-		box := boxes[box_ix]
+		box := boxes[boxIx]
 
-		old_lens_ix := slices.IndexFunc(box, func(l lens) bool {
+		oldLensIx := slices.IndexFunc(box, func(l lens) bool {
 			return l.label == label
 		})
 
-		op := part[op_ix]
+		op := part[opIx]
 		switch op {
 		case '=':
-			focal, err := strconv.Atoi(part[op_ix+1:])
+			focal, err := strconv.Atoi(part[opIx+1:])
 			if err != nil {
 				fmt.Fprintln(os.Stderr, "Could not parse focal:", err)
 				os.Exit(1)
 			}
 
-			new_lens := lens{label, focal}
+			newLens := lens{label, focal}
 
-			if old_lens_ix == -1 {
-				box = append(box, new_lens)
-				boxes[box_ix] = box
+			if oldLensIx == -1 {
+				box = append(box, newLens)
+				boxes[boxIx] = box
 			} else {
-				box[old_lens_ix] = new_lens
+				box[oldLensIx] = newLens
 			}
 		case '-':
-			if old_lens_ix != -1 {
-				boxes[box_ix] = slices.Delete(box, old_lens_ix, old_lens_ix+1)
+			if oldLensIx != -1 {
+				boxes[boxIx] = slices.Delete(box, oldLensIx, oldLensIx+1)
 			}
 		}
 	}
 
-	focusing_power := 0
-	for box_ix, box := range boxes {
-		for lens_ix, lens := range box {
-			focusing_power += (box_ix + 1) * (lens_ix + 1) * lens.focal
+	focusingPower := 0
+	for boxIx, box := range boxes {
+		for lensIx, lens := range box {
+			focusingPower += (boxIx + 1) * (lensIx + 1) * lens.focal
 		}
 	}
-	clipboard.WriteAll(strconv.Itoa(focusing_power))
+	clipboard.WriteAll(strconv.Itoa(focusingPower))
 }
 
 type lens struct {

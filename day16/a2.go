@@ -7,7 +7,7 @@ import (
 )
 
 func Assignment2() {
-	max_total := 0
+	maxTotal := 0
 	beams := make([]beam, 0)
 	contraption := contraption("day16/input.txt")
 	h, w := len(contraption), len(contraption[0])
@@ -18,7 +18,7 @@ func Assignment2() {
 		beams = append(beams, beam{-1, x, Down}, beam{h, x, Up})
 	}
 	for _, b := range beams {
-		max_total = max(runAssignment1(contraption, b), max_total)
+		maxTotal = max(runAssignment1(contraption, b), maxTotal)
 	}
-	clipboard.WriteAll(strconv.Itoa(max_total))
+	clipboard.WriteAll(strconv.Itoa(maxTotal))
 }
