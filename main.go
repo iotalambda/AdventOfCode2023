@@ -18,6 +18,7 @@ import (
 	"aoc2023/day22"
 	"aoc2023/day23"
 	"aoc2023/day24"
+	"aoc2023/day25"
 	"aoc2023/day3"
 	"aoc2023/day4"
 	"aoc2023/day5"
@@ -33,7 +34,7 @@ import (
 func main() {
 	args := os.Args[1:]
 	day, err := strconv.Atoi(args[0])
-	if err != nil || day < 1 || day > 24 {
+	if err != nil || day < 1 || day > 25 {
 		fmt.Fprintln(os.Stderr, "Invalid day.")
 		os.Exit(1)
 	}
@@ -211,6 +212,11 @@ func main() {
 			day24.Assignment1()
 		case 2:
 			day24.Assignment2()
+		}
+	case 25:
+		switch a {
+		case 1:
+			day25.Assignment1()
 		}
 	default:
 		fmt.Fprintln(os.Stderr, "Day not yet solved.")

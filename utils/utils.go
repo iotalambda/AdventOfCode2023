@@ -47,3 +47,11 @@ func Prepend[T any](slice []T, elems ...T) []T {
 	slices.Reverse(slice)
 	return slice
 }
+
+func Array[K comparable, V any](src map[K]V) []V {
+	arr := make([]V, 0, len(src))
+	for _, v := range src {
+		arr = append(arr, v)
+	}
+	return arr
+}
